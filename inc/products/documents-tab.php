@@ -215,10 +215,12 @@ class Product_Documents_Tab {
      */
     private function render_documents_list( $documents ) {
         ?>
+            <h2>IFU Documents</h2>
         <div class="ifu-documents-tab-content">
             <div class="ifu-documents-grid">
                 <?php foreach ( $documents as $document ) : ?>
                     <?php if ( $document && isset( $document['title'], $document['url'] ) ) : ?>
+                        
                         <div class="ifu-document-item">
                             <div class="ifu-document-header">
                                 <h4 class="ifu-document-title">

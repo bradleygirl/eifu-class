@@ -34,9 +34,8 @@ class IFU_Post_Type {
      */
     const META_FIELD_PREFIX = '_eifu_';    const URL_FIELDS = [
         'website_url' => 'Website URL',
-        'download_url' => 'Download URL', 
-        'support_url' => 'Support URL',
-        'documentation_url' => 'Documentation URL'
+        'download_url' => 'Download URL',
+        'support_url' => 'Support URL'
     ];
     const CHECKBOX_FIELDS = [
         'is_featured' => 'Featured Item',

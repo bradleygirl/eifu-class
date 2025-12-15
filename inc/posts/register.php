@@ -53,9 +53,8 @@ class IFU_Post_Register {
     const META_FIELD_PREFIX = '_eifu_';
 	const URL_FIELDS = [
         'eng_usa_url' => 'English USA URL',
-        'eng_ce_url' => 'English CE URL', 
-        'base_translation_url' => 'Base Translation URL',
-        'documentation_url' => 'Documentation URL'
+        'eng_ce_url' => 'English CE URL',
+        'base_translation_url' => 'Base Translation URL'
     ];
     const CHECKBOX_FIELDS = [
         'usa_default' => 'Use English USA URL as default English file',
