@@ -4,23 +4,18 @@
 
 ### Current Setup
 1. `archive-ifudoc.php` - Root archive page for all IFU documents
-2. `taxonomy-ifucat.php` - Category archive pages 
-3. `single-ifudoc.php` - Individual document pages
+2. `taxonomy-toplevel.php` - Top-level (parent) category archive pages
+3. `taxonomy-child.php` - Child category archive pages
+4. `single-ifudoc.php` - Individual document pages
 
-### Additional Template Options
+### Template Loading Priority
 
-You can create more specific templates for finer control:
+The `template_include` filter in `eifu-class.php` overrides WordPress's default template hierarchy. It routes taxonomy archives based on term depth:
 
-#### Category-Specific Templates
-- `taxonomy-ifu-cat-medical-devices.php` - Only for "medical-devices" category
-- `taxonomy-ifu-cat-{slug}.php` - For any specific category slug
-
-#### Template Loading Priority (WordPress follows this order):
-1. `taxonomy-{taxonomy}-{term}.php` - Most specific (e.g., `taxonomy-ifu-cat-medical-devices.php`)
-2. `taxonomy-{taxonomy}.php` - For all terms in taxonomy (e.g., `taxonomy-ifu-cat.php`)
-3. `taxonomy.php` - For all taxonomies
-4. `archive.php` - General archive template
-5. `index.php` - Fallback
+1. **Taxonomy archive (parent = 0)** → `taxonomy-toplevel.php`
+2. **Taxonomy archive (parent > 0)** → `taxonomy-child.php`
+3. **Post type archive** → `archive-ifudoc.php`
+4. **Single post** → `single-ifudoc.php`
 
 ## Example URLs and Templates
 
@@ -29,20 +24,20 @@ You can create more specific templates for finer control:
 - Template: `archive-ifudoc.php`
 - Shows: All categories and documents in hierarchical structure
 
-### Category Archives
-- URL: `/ifu/medical-devices/`
-- Template: `taxonomy-ifucat.php` (or `taxonomy-ifu-cat-medical-devices.php` if it exists)
-- Shows: Documents in "medical-devices" category + subcategories
+### Top-Level Category Archives
+- URL: `/ifu-cat/medical-devices/`
+- Template: `taxonomy-toplevel.php`
+- Shows: Direct posts + child terms with their posts
 
-### Subcategory Archives  
-- URL: `/ifu/medical-devices/surgical-tools/`
-- Template: `taxonomy-ifucat.php`
-- Shows: Documents in "surgical-tools" subcategory + breadcrumbs
+### Child Category Archives
+- URL: `/ifu-cat/medical-devices/surgical-tools/`
+- Template: `taxonomy-child.php`
+- Shows: Direct posts + any sub-child terms with their posts
 
 ### Single Documents
-- URL: `/document/surgical-procedure-guide/`
+- URL: `/ifu/surgical-procedure-guide/`
 - Template: `single-ifudoc.php`
-- Shows: Individual document with all metadata
+- Shows: Individual document with download links (English USA, English CE, translated files)
 
 ## Template Filter Logic
 
@@ -50,21 +45,33 @@ The `template_include` filter in `eifu-class.php` handles template selection:
 
 ```php
 add_filter('template_include', function($template) {
-    // 1. Check for taxonomy archives first (most specific)
+    // Handle taxonomy archives with conditional routing for hierarchy levels
     if (is_tax(EIFUC_G_TX)) {
-        $plugin_template = EIFUC_G_DIR . 'tmpl/taxonomy-ifucat.php';
-        if (file_exists($plugin_template)) {
-            return $plugin_template;
+        $current_term = get_queried_object();
+
+        // Check if this is a top-level term (parent = 0) or child term (parent > 0)
+        if ($current_term && $current_term->parent == 0) {
+            // Top-level category template
+            $plugin_template = EIFUC_G_DIR . 'tmpl/taxonomy-toplevel.php';
+            if (file_exists($plugin_template)) {
+                return $plugin_template;
+            }
+        } else {
+            // Child category template
+            $plugin_template = EIFUC_G_DIR . 'tmpl/taxonomy-child.php';
+            if (file_exists($plugin_template)) {
+                return $plugin_template;
+            }
         }
     }
-    // 2. Check for post type archive (root archive)
+    // Handle post type archive (root archive page)
     elseif (is_post_type_archive(EIFUC_G_PT)) {
         $plugin_template = EIFUC_G_DIR . 'tmpl/archive-ifudoc.php';
         if (file_exists($plugin_template)) {
             return $plugin_template;
         }
     }
-    // 3. Check for single posts
+    // Handle single posts
     elseif (is_singular(EIFUC_G_PT)) {
         $plugin_template = EIFUC_G_DIR . 'tmpl/single-ifudoc.php';
         if (file_exists($plugin_template)) {
@@ -78,33 +85,13 @@ add_filter('template_include', function($template) {
 ## Customization Tips
 
 ### 1. Category-Specific Styling
-Add conditional CSS in your taxonomy template:
+Add conditional CSS in your taxonomy templates:
 ```php
 $term_slug = $current_term->slug;
 echo '<div class="ifu-category-archive category-' . esc_attr($term_slug) . '">';
 ```
 
-### 2. Different Layouts per Category
-```php
-// In taxonomy-ifucat.php
-$term_slug = get_queried_object()->slug;
-
-switch ($term_slug) {
-    case 'medical-devices':
-        // Show grid layout
-        get_template_part('partials/documents-grid');
-        break;
-    case 'manuals':
-        // Show list layout  
-        get_template_part('partials/documents-list');
-        break;
-    default:
-        // Default layout
-        get_template_part('partials/documents-default');
-}
-```
-
-### 3. Custom Archive Headers
+### 2. Custom Archive Headers
 ```php
 // Different headers based on category level
 $current_term = get_queried_object();
