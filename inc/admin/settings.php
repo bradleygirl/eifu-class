@@ -261,7 +261,7 @@ class IFU_Admin_Settings {
         <div class="wrap">
             <h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
             
-            <?php echo $message; ?>
+            <?php echo wp_kses_post( $message ); ?>
             
             <div class="ifu-settings-notice">
                 <p><strong><?php esc_html_e( 'About these settings:', 'eifu-class' ); ?></strong></p>

@@ -7,7 +7,8 @@
  * Author URI:      YOUR SITE HERE
  * Text Domain:     eifu-class
  * Domain Path:     /languages
- * Version:         0.1.0
+ * Version:         1.0.0
+ * Requires PHP:    8.0
  *
  * @package         MGBdev\Eifu_Docs_Class
  */
@@ -18,15 +19,14 @@ namespace MGBdev\Eifu_Docs_Class;
 // Exit if accessed directly
 if ( !defined( 'ABSPATH' )) exit;
 
-define(constant_name: 'EIFUC_GLOBAl_VERSION', value: '1.0.0');
-define(constant_name: 'EIFUC_GLOBAl_NAME', value: 'ifuc-global');
-define(constant_name: 'EIFUC_GLOBAl_ABSPATH', value: __DIR__);
-define(constant_name: 'EIFUC_GLOBAl_BASE_NAME', value: plugin_basename(__FILE__));
-define(constant_name: 'EIFUC_G_DIR', value: plugin_dir_path(__FILE__));
-define(constant_name: 'EIFUC_G_URL', value: plugin_dir_url(__FILE__));
-//define(constant_name: ''eifu-class'', value:'eifu-class'); // GLOBAL TEXT DOMAIN
-define(constant_name: 'EIFUC_G_PT', value: 'ifu'); // GLOBAL POST TYPE
-define(constant_name: 'EIFUC_G_TX', value: 'ifu-cat'); // GLOBAL POST taxonomy
+define( 'EIFUC_GLOBAL_VERSION', '1.0.0' );
+define( 'EIFUC_GLOBAL_NAME', 'ifuc-global' );
+define( 'EIFUC_GLOBAL_ABSPATH', __DIR__ );
+define( 'EIFUC_GLOBAL_BASE_NAME', plugin_basename( __FILE__ ) );
+define( 'EIFUC_G_DIR', plugin_dir_path( __FILE__ ) );
+define( 'EIFUC_G_URL', plugin_dir_url( __FILE__ ) );
+define( 'EIFUC_G_PT', 'ifu' );      // CPT slug
+define( 'EIFUC_G_TX', 'ifu-cat' );  // Taxonomy slug
 
 
 add_action('before_woocommerce_init', function () {
